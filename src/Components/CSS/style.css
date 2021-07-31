@@ -1,0 +1,131 @@
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px 16px;
+}
+
+.navbar {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #d2d2d2;
+}
+
+.body {
+  margin-top: 16px;
+}
+
+.pokemon-logo {
+  height: 50px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bolder;
+  margin-bottom: 8px;
+}
+
+.owned-section {
+  margin-top: 8px;
+  font-weight: bolder;
+}
+
+.pokeball {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  margin: 8px;
+  position: relative;
+  border-radius: 50%;
+  background-image: -moz-radial-gradient(40% 40%, circle, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 1) 100%),
+    -moz-linear-gradient(-90deg, #f33 45%, #333 45%, #3f3f3f 50%, #333 55%, #fff 55%);
+  background-image: -webkit-radial-gradient(40% 40%, circle, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 1) 100%),
+    -webkit-linear-gradient(-90deg, #f33 45%, #333 45%, #3f3f3f 50%, #333 55%, #fff 55%);
+}
+
+.pokeball:before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 6;
+  width: 2px;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #aaa, 0 0 0 8px #fff, 0 0 0 12px #3f3f3f;
+  margin: 48%;
+}
+.pokeball:after {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 1;
+  width: 94%;
+  height: 10%;
+  background-color: rgba(0, 0, 0, 0);
+  margin: 45% 3%;
+  box-shadow: 12px 0 0 #fff, -12px 0 0 #fff;
+}
+
+.pokemon-list {
+  display: flex;
+  overflow: scroll;
+  margin-top: 16px;
+}
+
+.pokemon-section {
+  min-width: 100px;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.name-section {
+  text-align: center;
+  font-weight: bolder;
+  margin-top: 12px;
+  text-transform: uppercase;
+}
+
+.detail-section {
+  justify-content: flex-end;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detail-section img.profile-picture {
+  height: 150px;
+}
+
+.detail-section img.sprites {
+  height: 60px;
+}
+
+.sprite-section {
+  display: flex;
+  justify-content: center;
+}
+
+.name-title-section {
+  text-align: center;
+  font-weight: bolder;
+  margin-top: 12px;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+
+.type-section,
+.move-section {
+  margin-top: 8px;
+}
+
+.catch-button {
+  font-weight: bolder;
+  background: white;
+  padding: 8px;
+  width: 50%;
+  border-radius: 8px;
+}

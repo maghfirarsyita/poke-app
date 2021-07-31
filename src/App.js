@@ -1,25 +1,42 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import PokemonList from './Components/PokemonList';
+import PokemonDetail from './Components/PokemonDetail';
+import PokemonMyList from './Components/PokemonMyList';
+import './Components/CSS/style.css';
+import pokemonLogo from './pokemon-logo.png';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+  state = {
+    page: 1,
+    pokemonNumber: 0,
+  };
+
+  onSubmitDetailPageNumber = (detailNumber, page) => {
+    this.setState({ pokemonNumber: detailNumber, page: page });
+  }
+
+  render() {
+    let pageState;
+    switch (this.state.page) {
+      case 2:
+        pageState = <PokemonDetail onSubmit={this.onSubmitDetailPageNumber} detailNumber={this.state.pokemonNumber} />
+        break;
+      case 3:
+        pageState = <PokemonMyList onSubmit={this.onSubmitDetailPageNumber} detailNumber={this.state.pokemonNumber} />
+        break;
+      default:
+        pageState = <PokemonList onSubmit={this.onSubmitDetailPageNumber} />;
+        break;
+    }
+    return (
+      <div className="container">
+        <div className="navbar"><img src={pokemonLogo} className="pokemon-logo" alt="logo" /></div>
+        {pageState}
+      </div>
+    );
+  }
 }
 
 export default App;
