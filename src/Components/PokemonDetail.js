@@ -5,29 +5,69 @@ class PokemonDetail extends React.Component {
     state = {
         currsubmit: 1,
         pokemonDetail: {},
-        openModal: false,
-        catchInfo: '',
+        modal: false,
+        catchStatus: false,
         pokemonAlreadyExist: false,
+        startCatching: false,
+        nickname: '',
+        currentList: localStorage.getItem('myPokemon') ? JSON.parse(localStorage.getItem('myPokemon')) : [],
+        warning: '',
+        catchInfo: true,
+        possiblity: false,
+        isGoingToRelease: false,
     };
 
-    handleBack() {
-        this.props.onSubmit(0, 1);
+    handleAction(action) {
+        switch (action) {
+            case 'catch':
+                this.setState({ modal: true, possiblity: Math.random() < 0.5 });
+                setTimeout(() => {
+                    this.setState({ startCatching: true });
+                }, 1500);
+                break;
+            case 'release':
+                this.setState({ modal: true, isGoingToRelease: true });
+                break;
+            case 'submit-nickname':
+                this.handleNickname();
+                break;
+            case 'submit-release':
+                const myCurrentList = this.state.currentList;
+                const releasedIndex = myCurrentList.findIndex(pokemon => pokemon.nickname === this.props.detailNickname);
+                myCurrentList.splice(releasedIndex, 1);
+                localStorage.setItem('myPokemon', JSON.stringify(myCurrentList));
+                this.props.onSubmit(0, 3);
+                this.handleAction('close');
+                break;
+            default:
+                this.setState({ modal: false, startCatching: false, isGoingToRelease: false });
+                break;
+        }
     }
 
-    handleCatch() {
-        const random_boolean = Math.random() < 0.5;
-        const catchedPokemonInfo = {
-            name: this.state.pokemonDetail.name,
-            id: this.state.pokemonDetail.id
-        }
-        const currentList = localStorage.getItem('myPokemon');
-        let myCurrentList = currentList ? JSON.parse(currentList) : [];
-        myCurrentList.push(catchedPokemonInfo);
-        if (random_boolean) {
-            this.setState({ catchInfo: 'Congrats! You catched the pokemon!', pokemonAlreadyExist: true })
+    handleNickname() {
+        const myCurrentList = this.state.currentList;
+        let isAvailableNickname = true;
+        myCurrentList.forEach(list => {
+            if (list.nickname === this.state.nickname && list.id === this.state.pokemonDetail.id) {
+                isAvailableNickname = false;
+                return;
+            }
+        });
+
+        if (isAvailableNickname) {
+            const catchedPokemonInfo = {
+                name: this.state.pokemonDetail.name,
+                id: this.state.pokemonDetail.id,
+                nickname: this.state.nickname,
+            }
+            myCurrentList.push(catchedPokemonInfo);
             localStorage.setItem('myPokemon', JSON.stringify(myCurrentList));
+            this.setState({ warning: '', nickname: '' });
+            this.handleAction('close');
         } else {
-            this.setState({ catchInfo: `Oops.. too bad you didn't catch the pokemon.` })
+            this.setState({ warning: 'You already own this nickname. Choose other nickname!' });
+            return;
         }
     }
 
@@ -36,18 +76,42 @@ class PokemonDetail extends React.Component {
         this.setState({
             pokemonDetail: response.data,
         })
+        this.checkPokemonDetail();
         this.checkPokemonOwnStatus();
     }
 
     checkPokemonOwnStatus() {
-        const currentList = localStorage.getItem('myPokemon');
-        let myCurrentList = currentList ? JSON.parse(currentList) : [];
-        for (let i = 0; i < myCurrentList.length; i++) {
-            if (myCurrentList[i].name === this.state.pokemonDetail.name) {
+        const myCurrentList = this.state.currentList;
+        myCurrentList.forEach(list => {
+            if (list.nickname === this.state.pokemonDetail.nickname) {
                 this.setState({ pokemonAlreadyExist: true });
             }
+        })
+    }
+
+    checkPokemonDetail() {
+        const myCurrentList = this.state.currentList;
+        myCurrentList.forEach(list => {
+            if (list.id === this.state.pokemonDetail.id && list.nickname === this.props.detailNickname) {
+                this.setState({
+                    pokemonDetail: {
+                        ...this.state.pokemonDetail,
+                        nickname: list.nickname
+                    }
+                })
+            }
+        })
+    }
+
+    computedStyle() {
+        if (this.state.modal) {
+            return { display: 'block' };
         }
-        console.log('checl status', this.state.pokemonAlreadyExist);
+        return { display: 'none' };
+    }
+
+    onChangeInput = (e) => {
+        this.setState({ nickname: e.target.value });
     }
 
     componentDidMount() {
@@ -55,31 +119,78 @@ class PokemonDetail extends React.Component {
     }
 
     render() {
-        const { pokemonDetail, catchInfo, pokemonAlreadyExist } = this.state;
-        let catchButton;
-        if (pokemonAlreadyExist) {
-            catchButton = <div>You already owned this pokemon.</div>
+        const { pokemonDetail, startCatching, warning, pokemonAlreadyExist, possiblity, isGoingToRelease } = this.state;
+
+        const pokemonExist = pokemonAlreadyExist && this.props.detailNickname;
+        const catchButton = <button className="catch-button" onClick={() => this.handleAction('catch')}>
+            Catch this pokemon
+        </button>;
+        const releaseButton = <button className="release-button" onClick={() => this.handleAction('release')}>
+            Release this pokemon
+        </button>;
+        const actionButton = pokemonExist ? releaseButton : catchButton;
+        let modalContent;
+        if (isGoingToRelease) {
+            modalContent = <div className="body-content">
+                <div>Are you sure you want to release <b>{pokemonDetail.nickname}</b>?</div>
+                <div>
+                    <button className="submit-button" onClick={() => this.handleAction('close')}>Cancel</button>
+                    <button className="submit-button" onClick={() => this.handleAction('submit-release')}>Release</button>
+                </div>
+            </div>;
+        } else if (startCatching) {
+            if (possiblity) {
+                modalContent = <div className="body-content">
+                    <img className="profile-picture" width="100px" alt={'icon-' + pokemonDetail.name} src={pokemonDetail.sprites ? pokemonDetail.sprites.other.dream_world.front_default : ''}></img>
+                    <div className="title">Congrats!</div>
+                    <div>You caught the pokemon, now give a nickname!</div>
+                    <input className="input-nickname" placeholder="Input name here" value={this.state.nickname} onChange={this.onChangeInput} />
+                    <div>
+                        <button className="submit-button" onClick={() => this.handleAction('close')}>Cancel</button>
+                        <button className="submit-button" onClick={() => this.handleAction('submit-nickname')}>Save</button>
+                    </div>
+                    <div className="warning-text">{warning}</div>
+                </div>
+            } else {
+                modalContent = <div className="body-content">
+                    <div className="title">Too bad..</div>
+                    <div>You failed to catch the pokemon.</div>
+                    <button className="back-button" onClick={() => this.handleAction('close')}>Try later</button>
+                </div>
+            }
         } else {
-            catchButton = <button className="catch-button" onClick={() => this.handleCatch()}>Catch this pokemon!</button>;
-        };
+            modalContent = <div className="body-content">catching....</div>
+        }
+
         return (
-            <div className="ui input-section">
-                <button onClick={() => this.handleBack()}>Go back</button>
+            <div className="pokemon-detail">
+                <div className="modal" style={this.computedStyle()}>
+                    <div className="modal-content">
+                        {modalContent}
+                    </div>
+                </div>
                 <div className="detail-section">
-                    <img className="profile-picture" alt={'icon-' + pokemonDetail.name} src={pokemonDetail.sprites ? pokemonDetail.sprites.other.dream_world.front_default : ''}></img>
+                    <img className="profile-picture" width="100px" alt={'icon-' + pokemonDetail.name} src={pokemonDetail.sprites ? pokemonDetail.sprites.other.dream_world.front_default : ''}></img>
                     <div className="name-title-section">{pokemonDetail.name}</div>
+                    {
+                        pokemonDetail.nickname ? <div className="nickname-section">
+                            <div className="nickname-label">Nickname: </div>
+                            <div className="nickname-text-section">
+                                {pokemonDetail.nickname ? pokemonDetail.nickname : ''}
+                            </div>
+                        </div> : ''
+                    }
                     <div className="sprite-section">
                         <img className="sprites" alt={'fronticon-' + pokemonDetail.name} src={pokemonDetail.sprites ? pokemonDetail.sprites.front_default : ''}></img>
                         <img className="sprites" alt={'backicon' + pokemonDetail.name} src={pokemonDetail.sprites ? pokemonDetail.sprites.back_default : ''}></img>
                     </div>
-                    {catchButton}
-                    {catchInfo}
+                    {actionButton}
                     <div className="type-section">
                         <div className="name-section">Types:</div>
                         {
                             (pokemonDetail && pokemonDetail.types ? pokemonDetail.types : []).map((type, index) => {
                                 return (
-                                    <div className="pokemon-section" key={index}>
+                                    <div className="" key={index}>
                                         <div className="pokemon-name">{type.type.name}</div>
                                     </div>
                                 );
@@ -91,7 +202,7 @@ class PokemonDetail extends React.Component {
                         {
                             (pokemonDetail && pokemonDetail.moves ? pokemonDetail.moves : []).map((move, index) => {
                                 return (
-                                    <div className="pokemon-section" key={index}>
+                                    <div className="" key={index}>
                                         <div className="pokemon-name">{move.move.name}</div>
                                     </div>
                                 );

@@ -1,19 +1,32 @@
 .container {
+  position: relative;
   max-width: 480px;
   margin: 0 auto;
   padding: 0 16px 16px;
 }
 
 .navbar {
+  position: fixed;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #d2d2d2;
+  padding: 16px 0 0;
+  width: 100%;
+  background: white;
+  top: 0;
+  left: 0;
+  z-index: 999;
 }
 
 .body {
+  padding-top: 12vh;
   margin-top: 16px;
+}
+
+@media screen and (max-width: 375px) {
+  .body {
+    padding-top: 15vh;
+  }
 }
 
 .pokemon-logo {
@@ -27,21 +40,22 @@
 }
 
 .owned-section {
+  text-align: center;
   margin-top: 8px;
   font-weight: bolder;
 }
 
 .pokeball {
+  cursor: pointer;
   width: 50px;
   height: 50px;
   display: inline-block;
   margin: 8px;
   position: relative;
   border-radius: 50%;
-  background-image: -moz-radial-gradient(40% 40%, circle, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 1) 100%),
-    -moz-linear-gradient(-90deg, #f33 45%, #333 45%, #3f3f3f 50%, #333 55%, #fff 55%);
-  background-image: -webkit-radial-gradient(40% 40%, circle, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 1) 100%),
-    -webkit-linear-gradient(-90deg, #f33 45%, #333 45%, #3f3f3f 50%, #333 55%, #fff 55%);
+  border: 1px solid black;
+  background-image: -moz-linear-gradient(-90deg, red 55%, red 50%, #fff 55%);
+  background-image: -webkit-linear-gradient(-90deg, red 55%, red 50%, #fff 55%);
 }
 
 .pokeball:before {
@@ -53,29 +67,20 @@
   height: 2px;
   background-color: #fff;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #aaa, 0 0 0 8px #fff, 0 0 0 12px #3f3f3f;
+  box-shadow: 0 0 0 4px #aaa, 0 0 0 8px #fff, 0 0 0 9px #3f3f3f;
   margin: 48%;
-}
-.pokeball:after {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: 1;
-  width: 94%;
-  height: 10%;
-  background-color: rgba(0, 0, 0, 0);
-  margin: 45% 3%;
-  box-shadow: 12px 0 0 #fff, -12px 0 0 #fff;
 }
 
 .pokemon-list {
   display: flex;
   overflow: scroll;
   margin-top: 16px;
+  flex-wrap: wrap;
 }
 
 .pokemon-section {
-  min-width: 100px;
+  padding: 8px 0;
+  width: 24%;
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -90,14 +95,14 @@
 }
 
 .detail-section {
-  justify-content: flex-end;
   display: flex;
-  flex-direction: column;
+  flex-flow: column;
   align-items: center;
+  text-align: center;
 }
 
-.detail-section img.profile-picture {
-  height: 150px;
+.profile-picture {
+  height: 100px;
 }
 
 .detail-section img.sprites {
@@ -128,4 +133,152 @@
   padding: 8px;
   width: 50%;
   border-radius: 8px;
+  cursor: pointer;
+}
+
+.release-button {
+  font-weight: bolder;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.back-button {
+  font-weight: bolder;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.submit-button {
+  font-weight: bolder;
+  background: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  margin: 12px 8px 0;
+}
+
+.input-nickname {
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid black;
+  border-radius: 8px;
+}
+
+.nickname-section {
+  padding: 8px 0;
+}
+
+.nav-options {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #c8c8c8;
+}
+.nav-options div {
+  cursor: pointer;
+  width: 100%;
+}
+
+.nav-options div:hover {
+  font-weight: bolder;
+}
+
+.nav-logo {
+  margin-bottom: 8px;
+}
+
+.pokemon-detail {
+  padding-top: 20px;
+}
+
+.skeleton {
+  display: flex;
+  justify-content: center;
+}
+
+.header-content {
+  width: 100%;
+  display: flex;
+}
+
+.body-content {
+  padding-top: 16px;
+  text-align: center;
+}
+
+.pokemon-nickname {
+  font-weight: bolder;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 80px;
+  text-overflow: ellipsis;
+}
+
+.nickname-text-section {
+  font-weight: bolder;
+}
+
+.pokemon-name {
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.detail-section .pokemon-name {
+  font-size: 14px;
+}
+
+.warning-text {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #954949;
+}
+
+.release-text {
+  border: 1px solid black;
+  padding: 4px;
+  font-size: 12px;
+  border-radius: 6px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.load-more-section {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 20vh auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 480px;
 }
