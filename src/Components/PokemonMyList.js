@@ -3,7 +3,6 @@ import TextContainer from './Tools/TextContainer';
 
 class PokemonMyList extends React.Component {
     state = {
-        currsubmit: 1,
         currentList: localStorage.getItem('myPokemon') ? JSON.parse(localStorage.getItem('myPokemon')) : [],
         modal: false,
         selectedPokemon: '',
