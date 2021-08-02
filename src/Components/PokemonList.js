@@ -1,24 +1,28 @@
 import React from 'react';
 import pokemon from './API/poke_api';
+import TextContainer from './Tools/TextContainer';
 
 class PokemonList extends React.Component {
     state = {
         ownedTotal: 0,
         pokemonList: [],
-        urlApi: 'https://pokeapi.co/api/v2/pokemon',
         totalList: 50,
     };
 
     fetchPokemonList = async (totalLimit) => {
-        const response = await pokemon.get('/api/v2/pokemon', {
-            params: {
-                limit: totalLimit,
-            }
-        });
-        this.setState({
-            pokemonList: response.data.results,
-        });
-        this.checkOwnedTotal();
+        try {
+            const response = await pokemon.get('/api/v2/pokemon', {
+                params: {
+                    limit: totalLimit,
+                }
+            });
+            this.setState({
+                pokemonList: response.data.results,
+            });
+            this.checkOwnedTotal();
+        } catch (error) {
+            console.log(error.response);
+        }
     }
 
     checkOwnedTotal() {
@@ -36,15 +40,7 @@ class PokemonList extends React.Component {
 
     handleDetail(pokemon) {
         const pokemonUrl = pokemon.split('/')[6];
-        this.props.onSubmit(pokemonUrl, 2);
-    }
-
-    handleCheckList() {
-        this.props.onSubmit(0, 3);
-    }
-
-    handleRestart() {
-        localStorage.setItem('myPokemon', []);
+        this.props.onSubmit(pokemonUrl, '', 'detail');
     }
 
     handleLoadMore() {
@@ -58,27 +54,33 @@ class PokemonList extends React.Component {
     render() {
         const { pokemonList, ownedTotal } = this.state;
         return (
-            <div className="pokemon-list-page">
-                <div className="owned-section">
+            <div className="pokemon-list-page" data-testid="list-page">
+                <TextContainer className="owned-section">
                     Owned: {ownedTotal}
-                </div>
-                {/* <div onClick={() => this.handleRestart()}>Restart</div> */}
-                <div className="pokemon-list">
-                    {
-                        pokemonList.map((pokemon, index) => {
-                            return (
-                                <div className="pokemon-section" key={'pokemon-list' + index}>
-                                    <div className="pokeball" onClick={() => this.handleDetail(pokemon.url)}>
+                </TextContainer>
+                {
+                    pokemonList.length > 0 ? 
+                    <div> 
+                        <div className="pokemon-list">
+                        {
+                            pokemonList.map((pokemon, index) => {
+                                return (
+                                    <div className="pokemon-section" key={'pokemon-list' + index}>
+                                        <div className="pokeball" onClick={() => this.handleDetail(pokemon.url)}>
+                                        </div>
+                                        <TextContainer size="14px" className="pokemon-name">{pokemon.name}</TextContainer>
                                     </div>
-                                    <div className="pokemon-name">{pokemon.name}</div>
-                                </div>
-                            );
-                        })
-                    }
-                </div>
-                <div className="load-more-section">
-                    <button className="release-button" onClick={() => this.handleLoadMore()}>Load more</button>
-                </div>
+                                );
+                            })
+                        }
+                        </div>
+                        <div className="load-more-section centered">
+                            <button className="release-button" onClick={() => this.handleLoadMore()}>Load more</button>
+                        </div>
+                    </div>
+                        :
+                        <TextContainer size="16px" className="centered">No list found</TextContainer>
+                }
             </div>
         );
     }

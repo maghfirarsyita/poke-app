@@ -1,4 +1,5 @@
 import React from 'react';
+import TextContainer from './Tools/TextContainer';
 
 class PokemonMyList extends React.Component {
     state = {
@@ -21,7 +22,7 @@ class PokemonMyList extends React.Component {
                 this.setState({ modal: false, selectedPokemon: '' });
                 break;
             case 'open-detail':
-                this.props.onSubmit(id, nickname, 2);
+                this.props.onSubmit(id, nickname, 'detail');
                 break;
             default:
                 this.setState({ modal: false, selectedPokemon: '' });
@@ -37,48 +38,44 @@ class PokemonMyList extends React.Component {
 
     render() {
         const { currentList, selectedPokemon } = this.state;
-        let sectionView;
-        if (currentList.length > 0) {
-            sectionView =
-                <div>
-                    <div className="modal" style={this.computedStyle()}>
-                        <div className="modal-content">
-                            <div className="body-content">
-                                <div>Are you sure you want to release <b>{selectedPokemon}</b>?</div>
-                                <div>
-                                    <button className="submit-button" onClick={() => this.handleAction('close')}>Cancel</button>
-                                    <button className="submit-button" onClick={() => this.handleAction('submit-release')}>Release</button>
+        return (
+            <div className="pokemon-my-list" data-testid="my-list">
+                <div className="my-section">
+                    {currentList.length > 0 ?
+                        <div>
+                            <div className="modal" style={this.computedStyle()}>
+                                <div className="modal-content">
+                                    <div className="body-content">
+                                        <div>Are you sure you want to release <b>{selectedPokemon}</b>?</div>
+                                        <div>
+                                            <button className="submit-button" onClick={() => this.handleAction('close')}>Cancel</button>
+                                            <button className="submit-button" onClick={() => this.handleAction('submit-release')}>Release</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <TextContainer className="owned-section">My owned pokemon</TextContainer>
+                            <div className="pokemon-list">
+                                {
+                                    currentList.map((pokemon, index) => {
+                                        return (
+                                            <div className="pokemon-section" key={'pokemon-list' + index}>
+                                                <div className="pokeball" onClick={() => this.handleAction('open-detail', pokemon.nickname, pokemon.id)}>
+                                                </div>
+                                                <TextContainer size="14px" color="#694516" className="pokemon-nickname">{pokemon.nickname}</TextContainer>
+                                                <TextContainer size="12px" className="pokemon-name">{pokemon.name}</TextContainer>
+                                                <button className="release-text" onClick={() => this.handleAction('release-modal', pokemon.nickname)}>Release</button>
+                                            </div>
+                                        );
+                                    })
+                                }
+                            </div>
                         </div>
-                    </div>
-                    <div className="owned-section">My owned pokemon</div>
-                    <div className="pokemon-list">
-                        {
-                            currentList.map((pokemon, index) => {
-                                return (
-                                    <div className="pokemon-section" key={'pokemon-list' + index}>
-                                        <div className="pokeball" onClick={() => this.handleAction('open-detail', pokemon.nickname, pokemon.id)}>
-                                        </div>
-                                        <div className="pokemon-nickname">{pokemon.nickname}</div>
-                                        <div className="pokemon-name">{pokemon.name}</div>
-                                        <div className="release-text" onClick={() => this.handleAction('release-modal', pokemon.nickname)}>Release</div>
-                                    </div>
-                                );
-                            })
-                        }
-                    </div>
-                </div>
-        } else {
-            sectionView =
-                <div className="skeleton">
-                    Still empty..
-                </div>;
-        }
-        return (
-            <div className="pokemon-my-list">
-                <div className="my-section">
-                    {sectionView}
+                        :
+                        <TextContainer size="16px" className="centered">
+                            Still empty..
+                        </TextContainer>
+                    }
                 </div>
             </div>
         );

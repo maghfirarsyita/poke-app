@@ -9,52 +9,41 @@ import './Components/CSS/style.css';
 class App extends React.Component {
 
   state = {
-    page: 1,
+    page: 'list',
     pokemonNumber: 0,
     pokemonNickname: '',
   };
 
-  onSubmitDetailPageNumber = (detailNumber, page) => {
-    this.setState({ pokemonNumber: detailNumber, page: page, pokemonNickname: '' });
-  }
-
-  onSubmitDetailPageNickname = (detailNumber, detailNickname, page) => {
+  onSubmitPageConfig = (detailNumber, detailNickname, page) => {
     this.setState({ page: page, pokemonNumber: detailNumber, pokemonNickname: detailNickname });
   }
 
   handleNavigation = (navigationType) => {
-    switch (navigationType) {
-      case 'owned': 
-        this.setState({page: 3});
-        break;
-      default: 
-        this.setState({page: 1});
-        break;
-    }
+    this.setState({ page: navigationType });
   }
 
   render() {
     let pageState;
     switch (this.state.page) {
-      case 2:
-        pageState = <PokemonDetail onSubmit={this.onSubmitDetailPageNumber} detailNickname={this.state.pokemonNickname} detailNumber={this.state.pokemonNumber} />
+      case 'detail':
+        pageState = <PokemonDetail onSubmit={this.onSubmitPageConfig} detailNickname={this.state.pokemonNickname} detailNumber={this.state.pokemonNumber} />
         break;
-      case 3:
-        pageState = <PokemonMyList onSubmit={this.onSubmitDetailPageNickname} detailNumber={this.state.pokemonNumber} />
+      case 'my-list':
+        pageState = <PokemonMyList onSubmit={this.onSubmitPageConfig} detailNumber={this.state.pokemonNumber} />
         break;
       default:
-        pageState = <PokemonList onSubmit={this.onSubmitDetailPageNumber} />;
+        pageState = <PokemonList onSubmit={this.onSubmitPageConfig} />;
         break;
     }
     return (
       <div className="container">
         <div className="navbar">
           <div className="nav-logo">
-            <img src={pokemonLogo} className="pokemon-logo" alt="logo" width="125px" height="50px" />
+            <img src={pokemonLogo} className="pokemon-logo" alt="logo" width="125px" height="50px" data-testid="pokemon-logo" />
           </div>
           <div className="nav-options">
-            <div onClick={() => this.handleNavigation('all')}>All list</div>
-            <div onClick={() => this.handleNavigation('owned')}>My collection</div>
+            <div role="navigation" onClick={() => this.handleNavigation('list')}>All list</div>
+            <div role="navigation" onClick={() => this.handleNavigation('my-list')}>My collection</div>
           </div>
         </div>
         <div className="body">
